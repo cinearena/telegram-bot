@@ -1,6 +1,6 @@
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext, CallbackQueryHandler
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
 import os
 
 # Enable logging
@@ -11,113 +11,115 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Bot Token (Replace with your actual token)
-TOKEN = "YOUR_BOT_TOKEN_HERE"
+TOKEN = "8410891252:AAEDNVXneNwzziQTubfr3Px9ngjyrakVX2o"
 
-# Sample website database (you can expand this)
-WEBSITES = {
-    "google": {"url": "https://www.google.com", "name": "Google Search"},
-    "youtube": {"url": "https://www.youtube.com", "name": "YouTube"},
-    "github": {"url": "https://www.github.com", "name": "GitHub"},
-    "wikipedia": {"url": "https://www.wikipedia.org", "name": "Wikipedia"},
-    "amazon": {"url": "https://www.amazon.com", "name": "Amazon"},
-    "netflix": {"url": "https://www.netflix.com", "name": "Netflix"},
-    "twitter": {"url": "https://twitter.com", "name": "Twitter"},
-    "facebook": {"url": "https://www.facebook.com", "name": "Facebook"},
-    "instagram": {"url": "https://www.instagram.com", "name": "Instagram"},
-    "reddit": {"url": "https://www.reddit.com", "name": "Reddit"},
-    "stackoverflow": {"url": "https://stackoverflow.com", "name": "Stack Overflow"},
-    "linkedin": {"url": "https://www.linkedin.com", "name": "LinkedIn"},
-}
+# The fixed link
+WEBSITE_URL = "https://cinearena.live"
+WEBSITE_NAME = "CineArena Live"
 
 async def start(update: Update, context: CallbackContext) -> None:
     """Send a welcome message when the command /start is issued."""
-    welcome_text = """
-    👋 *Welcome to Website Finder Bot!*
+    keyboard = [
+        [InlineKeyboardButton("🎬 Visit CineArena Live", url=WEBSITE_URL)]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
     
-    *How to use:*
-    1. Type any website name (e.g., google, youtube, github)
-    2. I'll find the website link for you
-    3. Click the button below to visit the website
+    welcome_text = f"""
+    🎬 *Welcome to CineArena Live Bot!*
     
-    *Try typing:* google, youtube, github, wikipedia, etc.
+    *Stream movies and TV shows for FREE!*
     
-    Or use /help for more information.
+    📌 *Click below to visit:*
+    {WEBSITE_URL}
+    
+    ⭐ *Features:*
+    • HD Streaming
+    • No Registration Required
+    • Latest Movies & TV Shows
+    • Free Access
+    
+    *Simply type anything to get the link!*
     """
-    await update.message.reply_text(welcome_text, parse_mode='Markdown')
+    await update.message.reply_text(welcome_text, reply_markup=reply_markup, parse_mode='Markdown')
 
 async def help_command(update: Update, context: CallbackContext) -> None:
     """Send a help message."""
-    help_text = """
-    *Help Guide*
+    keyboard = [
+        [InlineKeyboardButton("🎬 Visit CineArena Live", url=WEBSITE_URL)]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    help_text = f"""
+    *🎬 CineArena Live Help*
+    
+    This bot provides the link to CineArena Live.
     
     *Commands:*
     /start - Start the bot
-    /help - Show this help message
-    /websites - List all available websites
+    /help - Show this message
+    /link - Get the direct link
     
-    *Simply type* any website name (like "google", "youtube") and I'll provide the link.
+    *Simply type ANY message* to get the CineArena Live link!
     
-    *Example:* Type "google" to get Google's link.
+    *Website:* {WEBSITE_URL}
     """
-    await update.message.reply_text(help_text, parse_mode='Markdown')
+    await update.message.reply_text(help_text, reply_markup=reply_markup, parse_mode='Markdown')
 
-async def list_websites(update: Update, context: CallbackContext) -> None:
-    """List all available websites."""
-    websites_list = "*Available Websites:*\n\n"
-    for key in sorted(WEBSITES.keys()):
-        websites_list += f"• {key.capitalize()}\n"
+async def send_link(update: Update, context: CallbackContext) -> None:
+    """Send the CineArena Live link."""
+    keyboard = [
+        [InlineKeyboardButton("🎬 Click to Visit CineArena Live", url=WEBSITE_URL)]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
     
-    websites_list += "\nType any of these names to get the link!"
-    await update.message.reply_text(websites_list, parse_mode='Markdown')
+    # You received: {update.message.text}
+    message_text = f"""
+    🎬 *CineArena Live*
+    
+    📌 *Click below to visit:*
+    
+    🎥 Stream movies & TV shows FREE
+    ⭐ HD Quality • No Registration
+    🆓 Completely Free Access
+    
+    *Link:* {WEBSITE_URL}
+    """
+    await update.message.reply_text(message_text, reply_markup=reply_markup, parse_mode='Markdown')
 
-async def search_website(update: Update, context: CallbackContext) -> None:
-    """Handle user search queries."""
-    user_message = update.message.text.strip().lower()
+async def link_command(update: Update, context: CallbackContext) -> None:
+    """Send only the link when /link command is used."""
+    keyboard = [
+        [InlineKeyboardButton("🎬 Direct Link to CineArena Live", url=WEBSITE_URL)]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
     
-    # Check if query matches any website
-    found = False
-    for key, info in WEBSITES.items():
-        if key in user_message or user_message in key:
-            # Create inline keyboard with website button
-            keyboard = [
-                [InlineKeyboardButton(f"🌐 Visit {info['name']}", url=info['url'])]
-            ]
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            
-            # Send message with link
-            message_text = f"🔍 *{info['name']}*\n\n📌 *Click below to visit:*"
-            await update.message.reply_text(
-                message_text,
-                reply_markup=reply_markup,
-                parse_mode='Markdown'
-            )
-            found = True
-            break
-    
-    # If no website found
-    if not found:
-        # Try fuzzy matching
-        suggestions = []
-        for key in WEBSITES.keys():
-            if user_message in key or any(word in key for word in user_message.split()):
-                suggestions.append(key)
-        
-        if suggestions:
-            suggestion_text = "Did you mean:\n"
-            for suggestion in suggestions[:5]:  # Limit to 5 suggestions
-                suggestion_text += f"• {suggestion.capitalize()}\n"
-            await update.message.reply_text(suggestion_text)
-        else:
-            await update.message.reply_text(
-                "❌ Website not found in database.\n\n"
-                "Try: google, youtube, github, wikipedia, amazon, etc.\n"
-                "Or use /websites to see all available websites."
-            )
+    message_text = "🎬 *CineArena Live*\n\n📌 *Click below:*"
+    await update.message.reply_text(message_text, reply_markup=reply_markup, parse_mode='Markdown')
 
-async def handle_callback(update: Update, context: CallbackContext) -> None:
-    """Handle callback queries from inline buttons."""
-    query = update.callback_query
-    await query.answer()
+async def handle_all_messages(update: Update, context: CallbackContext) -> None:
+    """Handle ALL text messages with the link."""
+    # Check if it's a command (already handled)
+    if update.message.text.startswith('/'):
+        return
+    
+    # Send the link for ALL other messages
+    keyboard = [
+        [InlineKeyboardButton("🎬 Visit CineArena Live Now", url=WEBSITE_URL)]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    message_text = """
+    🎬 *CineArena Live*
+    
+    📌 *Click below:*
+    
+    Watch movies and TV shows for FREE!
+    No registration required.
+    Updated daily with new content.
+    
+    Enjoy your streaming! 🍿🎥
+    """
+    await update.message.reply_text(message_text, reply_markup=reply_markup, parse_mode='Markdown')
 
 def main() -> None:
     """Start the bot."""
@@ -127,16 +129,15 @@ def main() -> None:
     # Register command handlers
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(CommandHandler("websites", list_websites))
+    application.add_handler(CommandHandler("link", link_command))
     
-    # Register callback handler for buttons
-    application.add_handler(CallbackQueryHandler(handle_callback))
-    
-    # Register message handler for search queries
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, search_website))
+    # Register message handler for ALL text messages
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_all_messages))
 
     # Start the bot
-    print("🤖 Bot is running... Press Ctrl+C to stop.")
+    print("🎬 CineArena Live Bot is running...")
+    print("🤖 Bot will always reply with: https://cinearena.live")
+    print("🛑 Press Ctrl+C to stop.")
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == '__main__':
