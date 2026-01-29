@@ -1,1 +1,2 @@
-worker: python bot.py
+web: gunicorn bot:app
+worker: python -c "from bot import main; main()"
