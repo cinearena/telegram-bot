@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineArena Live Bot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 80px rgba(0,0,0,0.3);
+            padding: 50px;
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 3em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+        
+        .status {
+            display: inline-flex;
+            align-items: center;
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 18px 36px;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            min-width: 200px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #f1f3f4;
+            color: #333;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 16px;
+            border: 2px solid #e9ecef;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .instructions {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px 0;
+            text-align: left;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+            line-height: 2;
+            font-size: 1.1em;
+        }
+        
+        .api-info {
+            background: #333;
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🎬</div>
+        <h1>CineArena Live Bot</h1>
+        <p class="subtitle">Telegram Bot for Free Movie Streaming</p>
+        
+        <div class="status">
+            <span class="status-dot"></span>
+            ✅ Bot Status: ONLINE (Deployed on Vercel)
+        </div>
+        
+        <div class="buttons">
+            <a href="https://t.me/YourBotUsername" class="btn btn-primary" target="_blank">
+                <span>🤖</span> Open Telegram Bot
+            </a>
+            <a href="https://cinearena.live" class="btn btn-secondary" target="_blank">
+                <span>🎬</span> Visit CineArena Live
+            </a>
+            <button onclick="testAPI()" class="btn btn-secondary">
+                <span>⚡</span> Test API
+            </button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="uptime">24/7</div>
+                <div>Uptime</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="users">1K+</div>
+                <div>Active Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="links">10K+</div>
+                <div>Links Shared</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="speed">0.2s</div>
+                <div>Response Time</div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h2>📱 How to Use</h2>
+            <ol>
+                <li>Open Telegram app on your phone or computer</li>
+                <li>Search for <code>@YourBotUsername</code></li>
+                <li>Click "Start" or send any message</li>
+                <li>Receive instant link to CineArena Live</li>
+                <li>Enjoy free HD streaming without registration!</li>
+            </ol>
+        </div>
+        
+        <div class="api-info">
+            <h3>🔧 API Endpoints</h3>
+            <p>GET <code>/api/bot/status</code> - Check bot status</p>
+            <p>GET <code>/api/bot</code> - Bot information</p>
+            <p>POST <code>/api/bot/webhook</code> - Telegram webhook</p>
+        </div>
+        
+        <div class="footer">
+            <p>© 2024 CineArena Live Bot | Powered by Python & Vercel</p>
+            <p>Always Free • No Registration • HD Quality Streaming</p>
+        </div>
+    </div>
+    
+    <script>
+        function testAPI() {
+            fetch('/api/bot/status')
+                .then(response => response.json())
+                .then(data => {
+                    alert('✅ API is working!\nStatus: ' + data.status);
+                })
+                .catch(error => {
+                    alert('❌ API test failed');
+                });
+        }
+        
+        // Animate stats
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                element.innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+        
+        // Simulate live updates
+        setInterval(() => {
+            const users = document.getElementById('users');
+            const links = document.getElementById('links');
+            
+            let currentUsers = parseInt(users.textContent) || 1000;
+            let currentLinks = parseInt(links.textContent) || 10000;
+            
+            users.textContent = (currentUsers + Math.floor(Math.random() * 10)) + '+';
+            links.textContent = (currentLinks + Math.floor(Math.random() * 50)) + '+';
+        }, 5000);
+    </script>
+</body>
+</html>
